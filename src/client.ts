@@ -1,5 +1,5 @@
 import { HttpClient } from "./core/http";
-import { Console, buildConsoleUrl } from "./core/websocket";
+import { buildConsoleUrl, Console } from "./core/websocket";
 import { Projects } from "./resources/projects";
 import type { ConsoleOptions } from "./types/requests";
 
