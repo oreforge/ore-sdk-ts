@@ -38,6 +38,11 @@
 			"trailingCommas": "none"
 		}
 	},
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
 	"files": {
 		"ignore": ["dist", "node_modules"]
 	}
