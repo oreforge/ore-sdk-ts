@@ -32,7 +32,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.10",
 		"tsup": "^8.4.0",
-		"typescript": "^5.8.0"
+		"typescript": "^6.0.2"
 	},
 	"keywords": ["ore", "oreforge", "game-server", "infrastructure", "sdk", "docker"],
 	"license": "MIT",
