@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+  packages: write
 
 concurrency:
   group: release
@@ -15,9 +15,8 @@ concurrency:
 
 jobs:
   publish:
-    name: Build & Publish to npm
+    name: Build & Publish to GitHub Packages
     runs-on: ubuntu-latest
-    environment: npm
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -27,6 +26,18 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      - name: Verify version matches release tag
+        if: github.event_name == 'release'
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG="${{ github.event.release.tag_name }}"
+          TAG_VERSION="${TAG#v}"
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            echo "::error::Version mismatch: package.json is $PKG_VERSION but release tag is $TAG_VERSION"
+            exit 1
+          fi
+          echo "Version verified: $PKG_VERSION"
 
       - name: Lint & typecheck
         run: bun run ci
@@ -38,9 +49,9 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
+          registry-url: https://npm.pkg.github.com
 
-      - name: Publish with provenance
-        run: npm publish --provenance --access public
+      - name: Publish to GitHub Packages
+        run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
