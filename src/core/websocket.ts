@@ -55,7 +55,7 @@ export class Console implements ConsoleEvents {
 		this.errorCallbacks.push(callback);
 	}
 
-	write(data: Uint8Array): void {
+	write(data: Uint8Array<ArrayBuffer>): void {
 		if (this.ws.readyState === WebSocket.OPEN) {
 			this.ws.send(data);
 		}
