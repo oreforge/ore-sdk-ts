@@ -34,6 +34,12 @@
 		"tsup": "^8.5.1",
 		"typescript": "^6.0.2"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/oreforge/ore-sdk-ts.git"
+	},
+	"homepage": "https://github.com/oreforge/ore-sdk-ts#readme",
+	"bugs": "https://github.com/oreforge/ore-sdk-ts/issues",
 	"keywords": ["ore", "oreforge", "game-server", "infrastructure", "sdk", "docker"],
 	"license": "MIT",
 	"engines": {

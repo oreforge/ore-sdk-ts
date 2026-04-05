@@ -38,7 +38,12 @@ export class NdjsonStream implements AsyncIterable<StreamLine> {
 					const trimmed = raw.trim();
 					if (trimmed === "") continue;
 
-					const line = toCamelCase(JSON.parse(trimmed)) as StreamLine;
+					let line: StreamLine;
+					try {
+						line = toCamelCase(JSON.parse(trimmed)) as StreamLine;
+					} catch {
+						throw new OreStreamError({ done: true, error: `Malformed JSON: ${trimmed}` });
+					}
 
 					if (line.done && line.error) {
 						throw new OreStreamError(line);
@@ -51,7 +56,12 @@ export class NdjsonStream implements AsyncIterable<StreamLine> {
 			}
 
 			if (buffer.trim() !== "") {
-				const line = toCamelCase(JSON.parse(buffer.trim())) as StreamLine;
+				let line: StreamLine;
+				try {
+					line = toCamelCase(JSON.parse(buffer.trim())) as StreamLine;
+				} catch {
+					throw new OreStreamError({ done: true, error: `Malformed JSON: ${buffer.trim()}` });
+				}
 
 				if (line.done && line.error) {
 					throw new OreStreamError(line);
