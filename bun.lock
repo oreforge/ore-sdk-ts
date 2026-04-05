@@ -1,12 +1,11 @@
 {
   "lockfileVersion": 1,
-  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "@oreforge/sdk",
       "devDependencies": {
         "@biomejs/biome": "^2.4.10",
-        "tsup": "^8.4.0",
+        "tsup": "^8.5.1",
         "typescript": "^6.0.2",
       },
     },

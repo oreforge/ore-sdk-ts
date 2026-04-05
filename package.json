@@ -31,7 +31,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.10",
-		"tsup": "^8.4.0",
+		"tsup": "^8.5.1",
 		"typescript": "^6.0.2"
 	},
 	"keywords": ["ore", "oreforge", "game-server", "infrastructure", "sdk", "docker"],
