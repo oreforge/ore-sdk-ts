@@ -19,9 +19,13 @@ export class OreClient {
 			maxRetries: options.maxRetries,
 		});
 
+		const headers: Record<string, string> | undefined = options.token
+			? { Authorization: `Bearer ${options.token}` }
+			: undefined;
+
 		const createConsole = (name: string, opts: ConsoleOptions) => {
-			const url = buildConsoleUrl(options.baseUrl, options.token, name, opts.server);
-			return new Console(url, opts.cols, opts.rows);
+			const url = buildConsoleUrl(options.baseUrl, name, opts.server);
+			return new Console(url, opts.cols, opts.rows, headers);
 		};
 
 		this.projects = new Projects(http, createConsole);
