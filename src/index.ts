@@ -13,11 +13,11 @@ export { Console } from "./core/websocket";
 export { Project } from "./resources/project";
 export { Projects } from "./resources/projects";
 export type {
-	ContainerState,
-	ContainerStatus,
 	HealthState,
 	NetworkStatus,
 	PortBinding,
+	RuntimeStatus,
+	ServerState,
 	ServerStatus,
 	StreamLine,
 } from "./types/models";

@@ -13,7 +13,11 @@ export class Console implements ConsoleEvents {
 	private errorCallbacks: Array<(error: Error) => void> = [];
 
 	constructor(url: string, headers?: Record<string, string>) {
-		this.ws = headers ? new (WebSocket as any)(url, { headers }) : new WebSocket(url);
+		const WS = WebSocket as unknown as new (
+			url: string,
+			opts?: { headers: Record<string, string> },
+		) => WebSocket;
+		this.ws = headers ? new WS(url, { headers }) : new WebSocket(url);
 		this.ws.binaryType = "arraybuffer";
 
 		this.ws.addEventListener("message", (event: MessageEvent) => {
@@ -68,10 +72,16 @@ export class Console implements ConsoleEvents {
 	}
 }
 
-export function buildConsoleUrl(baseUrl: string, name: string, container: string, cols: number, rows: number): string {
+export function buildConsoleUrl(
+	baseUrl: string,
+	name: string,
+	server: string,
+	cols: number,
+	rows: number,
+): string {
 	const wsBase = baseUrl.replace(/^http/, "ws");
 	const url = new URL(`${wsBase}/api/projects/${encodeURIComponent(name)}/console`);
-	url.searchParams.set("container", container);
+	url.searchParams.set("server", server);
 	url.searchParams.set("cols", String(cols));
 	url.searchParams.set("rows", String(rows));
 	return url.toString();

@@ -13,7 +13,7 @@ export interface BuildRequest {
 }
 
 export interface PruneRequest {
-	target?: "all" | "containers" | "images" | "volumes";
+	target?: "all" | "servers" | "images" | "data";
 }
 
 export interface CleanRequest {
@@ -21,7 +21,7 @@ export interface CleanRequest {
 }
 
 export interface ConsoleOptions {
-	container: string;
+	server: string;
 	cols: number;
 	rows: number;
 }

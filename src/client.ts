@@ -24,7 +24,7 @@ export class OreClient {
 			: undefined;
 
 		const createConsole = (name: string, opts: ConsoleOptions) => {
-			const url = buildConsoleUrl(options.baseUrl, name, opts.container, opts.cols, opts.rows);
+			const url = buildConsoleUrl(options.baseUrl, name, opts.server, opts.cols, opts.rows);
 			return new Console(url, headers);
 		};
 

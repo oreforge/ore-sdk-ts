@@ -1,4 +1,4 @@
-export type ContainerState = "not found" | "created" | "running" | "exited" | "paused" | "dead";
+export type ServerState = "not found" | "created" | "running" | "exited" | "paused" | "dead";
 
 export type HealthState = "\u2014" | "starting" | "healthy" | "unhealthy";
 
@@ -8,9 +8,9 @@ export interface PortBinding {
 	protocol: string;
 }
 
-export interface ContainerStatus {
+export interface RuntimeStatus {
 	name: string;
-	state: ContainerState;
+	state: ServerState;
 	health: HealthState;
 	image: string;
 	ports?: PortBinding[];
@@ -24,7 +24,7 @@ export interface ContainerStatus {
 
 export interface ServerStatus {
 	name: string;
-	container: ContainerStatus;
+	container: RuntimeStatus;
 }
 
 export interface NetworkStatus {
