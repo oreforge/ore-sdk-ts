@@ -62,12 +62,9 @@ jobs:
       - name: Set dev version
         run: |
           PKG_VERSION=$(node -p "require('./package.json').version")
-          DEV_VERSION="${PKG_VERSION}-dev.$(git rev-parse --short HEAD)"
-          node -e "
-            const pkg = require('./package.json');
-            pkg.version = '${DEV_VERSION}';
-            require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
-          "
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          DEV_VERSION="${PKG_VERSION}-dev.${SHORT_SHA}"
+          npm version "$DEV_VERSION" --no-git-tag-version
           echo "Publishing version: $DEV_VERSION"
 
       - name: Setup Node
