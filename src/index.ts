@@ -23,6 +23,12 @@ export type {
 	PruneRequest,
 	RequestOptions,
 	UpRequest,
+	WebhookTriggerRequest,
 } from "./types/requests";
-export type { ProjectListResponse, ProjectResponse } from "./types/responses";
+export type {
+	ProjectListResponse,
+	ProjectResponse,
+	WebhookInfoResponse,
+	WebhookResponse,
+} from "./types/responses";
 export type { ConsoleFactory, ConsoleOptions } from "./types/websocket";

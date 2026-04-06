@@ -23,6 +23,10 @@ export class HttpClient {
 		this.maxRetries = options.maxRetries ?? 2;
 	}
 
+	get url(): string {
+		return this.baseUrl;
+	}
+
 	async get<T>(path: string, options?: RequestOptions): Promise<T> {
 		return this.request<T>("GET", path, undefined, options);
 	}

@@ -9,6 +9,7 @@ import type {
 	RequestOptions,
 	UpRequest,
 } from "../types/requests";
+import type { WebhookInfoResponse } from "../types/responses";
 import type { ConsoleFactory, ConsoleOptions } from "../types/websocket";
 
 export class Project {
@@ -81,6 +82,13 @@ export class Project {
 				request,
 				options,
 			),
+		);
+	}
+
+	async webhookInfo(options?: RequestOptions): Promise<WebhookInfoResponse> {
+		return this.http.get<WebhookInfoResponse>(
+			`/api/projects/${encodeURIComponent(this.name)}/webhook`,
+			options,
 		);
 	}
 
