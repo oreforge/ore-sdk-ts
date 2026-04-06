@@ -4,26 +4,20 @@ export interface AddProjectRequest {
 }
 
 export interface UpRequest {
-	noCache?: boolean;
+	no_cache?: boolean;
 	force?: boolean;
 }
 
 export interface BuildRequest {
-	noCache?: boolean;
+	no_cache?: boolean;
 }
 
 export interface PruneRequest {
-	target?: "all" | "containers" | "images" | "volumes";
+	target?: "all" | "servers" | "images" | "data";
 }
 
 export interface CleanRequest {
 	target?: "all" | "cache" | "builds";
-}
-
-export interface ConsoleOptions {
-	container: string;
-	cols: number;
-	rows: number;
 }
 
 export interface RequestOptions {

@@ -2,7 +2,8 @@ import type { HttpClient } from "../core/http";
 import { NdjsonStream } from "../core/streaming";
 import type { AddProjectRequest, RequestOptions } from "../types/requests";
 import type { ProjectListResponse, ProjectResponse } from "../types/responses";
-import { type ConsoleFactory, Project } from "./project";
+import type { ConsoleFactory } from "../types/websocket";
+import { Project } from "./project";
 
 export class Projects {
 	private readonly http: HttpClient;
@@ -26,13 +27,14 @@ export class Projects {
 	}
 
 	update(name: string, options?: RequestOptions): NdjsonStream {
-		const response = this.http.stream(
-			"POST",
-			`/api/projects/${encodeURIComponent(name)}/update`,
-			undefined,
-			options,
+		return new NdjsonStream(
+			this.http.stream(
+				"POST",
+				`/api/projects/${encodeURIComponent(name)}/update`,
+				undefined,
+				options,
+			),
 		);
-		return new NdjsonStream(response);
 	}
 
 	get(name: string): Project {

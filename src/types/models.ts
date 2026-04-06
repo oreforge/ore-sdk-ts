@@ -3,8 +3,8 @@ export type ContainerState = "not found" | "created" | "running" | "exited" | "p
 export type HealthState = "\u2014" | "starting" | "healthy" | "unhealthy";
 
 export interface PortBinding {
-	hostPort: number;
-	containerPort: number;
+	host_port: number;
+	container_port: number;
 	protocol: string;
 }
 
@@ -14,11 +14,11 @@ export interface ContainerStatus {
 	health: HealthState;
 	image: string;
 	ports?: PortBinding[];
-	startedAt?: string;
+	started_at?: string;
 	uptime?: number;
-	restartCount: number;
-	exitCode: number;
-	memoryBytes: number;
+	restart_count: number;
+	exit_code: number;
+	memory_bytes: number;
 	cpus: number;
 }
 

@@ -1,17 +1,12 @@
 export { OreClient, type OreClientOptions } from "./client";
 
-export {
-	OreApiError,
-	OreConnectionError,
-	OreError,
-	OreStreamError,
-} from "./core/errors";
-
+export { OreApiError, OreConnectionError, OreError, OreStreamError } from "./core/errors";
 export { NdjsonStream } from "./core/streaming";
+export { Console, OreSocket, type OreSocketOptions } from "./core/websocket";
 
-export { Console } from "./core/websocket";
 export { Project } from "./resources/project";
 export { Projects } from "./resources/projects";
+
 export type {
 	ContainerState,
 	ContainerStatus,
@@ -25,9 +20,9 @@ export type {
 	AddProjectRequest,
 	BuildRequest,
 	CleanRequest,
-	ConsoleOptions,
 	PruneRequest,
 	RequestOptions,
 	UpRequest,
 } from "./types/requests";
 export type { ProjectListResponse, ProjectResponse } from "./types/responses";
+export type { ConsoleFactory, ConsoleOptions } from "./types/websocket";

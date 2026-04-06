@@ -1,6 +1,5 @@
 import type { StreamLine } from "../types/models";
-import { OreStreamError } from "./errors";
-import { toCamelCase } from "./http";
+import { OreError, OreStreamError } from "./errors";
 
 export class NdjsonStream implements AsyncIterable<StreamLine> {
 	private readonly response: Response | Promise<Response>;
@@ -12,7 +11,7 @@ export class NdjsonStream implements AsyncIterable<StreamLine> {
 
 	async *[Symbol.asyncIterator](): AsyncIterator<StreamLine> {
 		if (this.consumed) {
-			throw new Error("NdjsonStream has already been consumed");
+			throw new OreError("NdjsonStream has already been consumed");
 		}
 		this.consumed = true;
 
@@ -35,42 +34,13 @@ export class NdjsonStream implements AsyncIterable<StreamLine> {
 				buffer = lines.pop() ?? "";
 
 				for (const raw of lines) {
-					const trimmed = raw.trim();
-					if (trimmed === "") continue;
-
-					let line: StreamLine;
-					try {
-						line = toCamelCase(JSON.parse(trimmed)) as StreamLine;
-					} catch {
-						throw new OreStreamError({ done: true, error: `Malformed JSON: ${trimmed}` });
-					}
-
-					if (line.done && line.error) {
-						throw new OreStreamError(line);
-					}
-
-					if (!line.done) {
-						yield line;
-					}
+					const line = parseLine(raw);
+					if (line) yield line;
 				}
 			}
 
-			if (buffer.trim() !== "") {
-				let line: StreamLine;
-				try {
-					line = toCamelCase(JSON.parse(buffer.trim())) as StreamLine;
-				} catch {
-					throw new OreStreamError({ done: true, error: `Malformed JSON: ${buffer.trim()}` });
-				}
-
-				if (line.done && line.error) {
-					throw new OreStreamError(line);
-				}
-
-				if (!line.done) {
-					yield line;
-				}
-			}
+			const line = parseLine(buffer);
+			if (line) yield line;
 		} finally {
 			reader.releaseLock();
 		}
@@ -85,7 +55,26 @@ export class NdjsonStream implements AsyncIterable<StreamLine> {
 	}
 
 	async drain(): Promise<void> {
-		for await (const _ of this) {
-		}
+		await this.toArray();
 	}
+}
+
+function parseLine(raw: string): StreamLine | undefined {
+	const trimmed = raw.trim();
+	if (trimmed === "") return undefined;
+
+	let line: StreamLine;
+	try {
+		line = JSON.parse(trimmed) as StreamLine;
+	} catch {
+		throw new OreStreamError({ done: true, error: `Malformed JSON: ${trimmed}` });
+	}
+
+	if (line.done && line.error) {
+		throw new OreStreamError(line);
+	}
+
+	if (line.done) return undefined;
+
+	return line;
 }

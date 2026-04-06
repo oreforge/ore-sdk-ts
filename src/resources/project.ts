@@ -5,13 +5,11 @@ import type { NetworkStatus } from "../types/models";
 import type {
 	BuildRequest,
 	CleanRequest,
-	ConsoleOptions,
 	PruneRequest,
 	RequestOptions,
 	UpRequest,
 } from "../types/requests";
-
-export type ConsoleFactory = (name: string, options: ConsoleOptions) => Console;
+import type { ConsoleFactory, ConsoleOptions } from "../types/websocket";
 
 export class Project {
 	readonly name: string;
@@ -32,53 +30,58 @@ export class Project {
 	}
 
 	up(request?: UpRequest, options?: RequestOptions): NdjsonStream {
-		const response = this.http.stream(
-			"POST",
-			`/api/projects/${encodeURIComponent(this.name)}/up`,
-			request,
-			options,
+		return new NdjsonStream(
+			this.http.stream(
+				"POST",
+				`/api/projects/${encodeURIComponent(this.name)}/up`,
+				request,
+				options,
+			),
 		);
-		return new NdjsonStream(response);
 	}
 
 	down(options?: RequestOptions): NdjsonStream {
-		const response = this.http.stream(
-			"POST",
-			`/api/projects/${encodeURIComponent(this.name)}/down`,
-			undefined,
-			options,
+		return new NdjsonStream(
+			this.http.stream(
+				"POST",
+				`/api/projects/${encodeURIComponent(this.name)}/down`,
+				undefined,
+				options,
+			),
 		);
-		return new NdjsonStream(response);
 	}
 
 	build(request?: BuildRequest, options?: RequestOptions): NdjsonStream {
-		const response = this.http.stream(
-			"POST",
-			`/api/projects/${encodeURIComponent(this.name)}/build`,
-			request,
-			options,
+		return new NdjsonStream(
+			this.http.stream(
+				"POST",
+				`/api/projects/${encodeURIComponent(this.name)}/build`,
+				request,
+				options,
+			),
 		);
-		return new NdjsonStream(response);
 	}
 
 	prune(request?: PruneRequest, options?: RequestOptions): NdjsonStream {
-		const response = this.http.stream(
-			"POST",
-			`/api/projects/${encodeURIComponent(this.name)}/prune`,
-			request,
-			options,
+		return new NdjsonStream(
+			this.http.stream(
+				"POST",
+				`/api/projects/${encodeURIComponent(this.name)}/prune`,
+				request,
+				options,
+			),
 		);
-		return new NdjsonStream(response);
 	}
 
 	clean(request?: CleanRequest, options?: RequestOptions): NdjsonStream {
-		const response = this.http.stream(
-			"POST",
-			`/api/projects/${encodeURIComponent(this.name)}/clean`,
-			request,
-			options,
+		return new NdjsonStream(
+			this.http.stream(
+				"POST",
+				`/api/projects/${encodeURIComponent(this.name)}/clean`,
+				request,
+				options,
+			),
 		);
-		return new NdjsonStream(response);
 	}
 
 	console(options: ConsoleOptions): Console {

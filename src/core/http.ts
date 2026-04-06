@@ -1,8 +1,10 @@
 import type { RequestOptions } from "../types/requests";
 import { OreApiError, OreConnectionError } from "./errors";
 
+type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
+
 const RETRYABLE_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
-const RETRYABLE_METHODS = new Set(["GET", "DELETE"]);
+const RETRYABLE_METHODS: Set<HttpMethod> = new Set(["GET", "DELETE"]);
 
 export interface HttpClientOptions {
 	baseUrl: string;
@@ -38,26 +40,16 @@ export class HttpClient {
 	}
 
 	async stream(
-		method: string,
+		method: HttpMethod,
 		path: string,
 		body?: unknown,
 		options?: RequestOptions,
 	): Promise<Response> {
-		const url = `${this.baseUrl}${path}`;
-		const headers = this.buildHeaders(options?.headers);
-
-		if (body !== undefined) {
-			headers.set("Content-Type", "application/json");
-		}
+		const init = this.buildFetchInit(method, body, options);
 
 		let response: Response;
 		try {
-			response = await fetch(url, {
-				method,
-				headers,
-				body: body !== undefined ? JSON.stringify(toSnakeCase(body)) : undefined,
-				signal: options?.signal,
-			});
+			response = await fetch(`${this.baseUrl}${path}`, init);
 		} catch (error) {
 			throw new OreConnectionError("Failed to connect", { cause: error });
 		}
@@ -70,7 +62,7 @@ export class HttpClient {
 	}
 
 	private async request<T>(
-		method: string,
+		method: HttpMethod,
 		path: string,
 		body?: unknown,
 		options?: RequestOptions,
@@ -79,7 +71,7 @@ export class HttpClient {
 		const canRetry = RETRYABLE_METHODS.has(method);
 		const maxAttempts = canRetry ? this.maxRetries + 1 : 1;
 
-		let lastError: Error | undefined;
+		let lastError: Error = new OreConnectionError("Request failed");
 
 		for (let attempt = 0; attempt < maxAttempts; attempt++) {
 			if (attempt > 0) {
@@ -88,18 +80,7 @@ export class HttpClient {
 
 			let response: Response;
 			try {
-				const headers = this.buildHeaders(options?.headers);
-
-				if (body !== undefined) {
-					headers.set("Content-Type", "application/json");
-				}
-
-				response = await fetch(url, {
-					method,
-					headers,
-					body: body !== undefined ? JSON.stringify(toSnakeCase(body)) : undefined,
-					signal: options?.signal,
-				});
+				response = await fetch(url, this.buildFetchInit(method, body, options));
 			} catch (error) {
 				lastError = new OreConnectionError("Failed to connect", { cause: error });
 
@@ -122,22 +103,35 @@ export class HttpClient {
 				return undefined as T;
 			}
 
-			const json: unknown = await response.json();
-			return toCamelCase(json) as T;
+			return (await response.json()) as T;
 		}
 
 		throw lastError;
 	}
 
-	private buildHeaders(extra?: Record<string, string>): Headers {
-		const headers = new Headers(extra);
+	private buildFetchInit(
+		method: HttpMethod,
+		body?: unknown,
+		options?: RequestOptions,
+	): RequestInit {
+		const headers = new Headers(options?.headers);
 
 		if (this.token) {
 			headers.set("Authorization", `Bearer ${this.token}`);
 		}
 
 		headers.set("Accept", "application/json");
-		return headers;
+
+		if (body !== undefined) {
+			headers.set("Content-Type", "application/json");
+		}
+
+		return {
+			method,
+			headers,
+			body: body !== undefined ? JSON.stringify(body) : undefined,
+			signal: options?.signal,
+		};
 	}
 
 	private async parseError(response: Response): Promise<OreApiError> {
@@ -156,38 +150,4 @@ function backoffDelay(attempt: number): number {
 
 function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-export function toCamelCase(obj: unknown): unknown {
-	if (Array.isArray(obj)) {
-		return obj.map(toCamelCase);
-	}
-
-	if (obj !== null && typeof obj === "object") {
-		return Object.fromEntries(
-			Object.entries(obj).map(([key, value]) => [
-				key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()),
-				toCamelCase(value),
-			]),
-		);
-	}
-
-	return obj;
-}
-
-export function toSnakeCase(obj: unknown): unknown {
-	if (Array.isArray(obj)) {
-		return obj.map(toSnakeCase);
-	}
-
-	if (obj !== null && typeof obj === "object") {
-		return Object.fromEntries(
-			Object.entries(obj).map(([key, value]) => [
-				key.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`),
-				toSnakeCase(value),
-			]),
-		);
-	}
-
-	return obj;
 }
