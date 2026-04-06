@@ -21,7 +21,7 @@ export interface CleanRequest {
 }
 
 export interface ConsoleOptions {
-	server: string;
+	container: string;
 	cols: number;
 	rows: number;
 }

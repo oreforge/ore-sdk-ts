@@ -12,13 +12,9 @@ export class Console implements ConsoleEvents {
 	private closeCallbacks: Array<() => void> = [];
 	private errorCallbacks: Array<(error: Error) => void> = [];
 
-	constructor(url: string, cols: number, rows: number, headers?: Record<string, string>) {
+	constructor(url: string, headers?: Record<string, string>) {
 		this.ws = headers ? new (WebSocket as any)(url, { headers }) : new WebSocket(url);
 		this.ws.binaryType = "arraybuffer";
-
-		this.ws.addEventListener("open", () => {
-			this.ws.send(JSON.stringify({ width: cols, height: rows }));
-		});
 
 		this.ws.addEventListener("message", (event: MessageEvent) => {
 			if (event.data instanceof ArrayBuffer) {
@@ -72,9 +68,11 @@ export class Console implements ConsoleEvents {
 	}
 }
 
-export function buildConsoleUrl(baseUrl: string, name: string, server: string): string {
+export function buildConsoleUrl(baseUrl: string, name: string, container: string, cols: number, rows: number): string {
 	const wsBase = baseUrl.replace(/^http/, "ws");
 	const url = new URL(`${wsBase}/api/projects/${encodeURIComponent(name)}/console`);
-	url.searchParams.set("server", server);
+	url.searchParams.set("container", container);
+	url.searchParams.set("cols", String(cols));
+	url.searchParams.set("rows", String(rows));
 	return url.toString();
 }
