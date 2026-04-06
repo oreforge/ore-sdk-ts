@@ -71,14 +71,14 @@ function clampDim(value: number | undefined, max: number): number {
 	return Math.min(Math.floor(value), max);
 }
 
-export class Console extends OreSocket<Uint8Array> {
+export class Console extends OreSocket<ArrayBuffer> {
 	constructor(url: string, headers?: Record<string, string>) {
 		super(url, { headers, binaryType: "arraybuffer" });
 	}
 
 	onData(callback: (data: Uint8Array) => void): void {
 		this.onMessage((data) => {
-			callback(new Uint8Array(data.buffer));
+			callback(new Uint8Array(data));
 		});
 	}
 
