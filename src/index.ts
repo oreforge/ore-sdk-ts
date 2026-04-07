@@ -11,9 +11,12 @@ export { Webhook } from "./resources/webhook";
 export type {
 	ContainerState,
 	ContainerStatus,
+	CPUStatus,
 	HealthState,
+	MemoryStatus,
 	NetworkStatus,
 	PortBinding,
+	ResourceStatus,
 	ServerStatus,
 	StreamLine,
 } from "./types/models";

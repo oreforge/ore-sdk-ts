@@ -8,6 +8,22 @@ export interface PortBinding {
 	protocol: string;
 }
 
+export interface MemoryStatus {
+	used_bytes: number;
+	limit_bytes: number;
+	percent: number;
+}
+
+export interface CPUStatus {
+	limit: number;
+	percent: number;
+}
+
+export interface ResourceStatus {
+	memory: MemoryStatus;
+	cpu: CPUStatus;
+}
+
 export interface ContainerStatus {
 	name: string;
 	state: ContainerState;
@@ -18,8 +34,7 @@ export interface ContainerStatus {
 	uptime?: number;
 	restart_count: number;
 	exit_code: number;
-	memory_bytes: number;
-	cpus: number;
+	resources: ResourceStatus;
 }
 
 export interface ServerStatus {
