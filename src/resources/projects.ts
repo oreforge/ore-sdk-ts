@@ -1,8 +1,7 @@
-import { OreApiError } from "../core/errors";
 import type { HttpClient } from "../core/http";
 import { NdjsonStream } from "../core/streaming";
-import type { AddProjectRequest, RequestOptions, WebhookTriggerRequest } from "../types/requests";
-import type { ProjectListResponse, ProjectResponse, WebhookResponse } from "../types/responses";
+import type { AddProjectRequest, RequestOptions } from "../types/requests";
+import type { ProjectListResponse, ProjectResponse } from "../types/responses";
 import type { ConsoleFactory } from "../types/websocket";
 import { Project } from "./project";
 
@@ -36,39 +35,6 @@ export class Projects {
 				options,
 			),
 		);
-	}
-
-	async triggerWebhook(
-		name: string,
-		request: WebhookTriggerRequest,
-		options?: RequestOptions,
-	): Promise<WebhookResponse> {
-		const params = new URLSearchParams({ secret: request.secret });
-		if (request.force) params.set("force", "true");
-		if (request.no_cache) params.set("no_cache", "true");
-
-		const url = `${this.http.url}/webhook/${encodeURIComponent(name)}?${params}`;
-
-		let response: Response;
-		try {
-			response = await fetch(url, {
-				method: "POST",
-				signal: options?.signal,
-				headers: options?.headers,
-			});
-		} catch (error) {
-			throw new OreApiError(0, `webhook request failed: ${error}`);
-		}
-
-		if (!response.ok) {
-			const body = (await response.json().catch(() => ({}))) as {
-				status?: number;
-				detail?: string;
-			};
-			throw new OreApiError(body.status ?? response.status, body.detail ?? response.statusText);
-		}
-
-		return (await response.json()) as WebhookResponse;
 	}
 
 	get(name: string): Project {

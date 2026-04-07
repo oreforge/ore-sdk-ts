@@ -1,7 +1,6 @@
 import { OreConnectionError } from "./errors";
 
 export interface OreSocketOptions {
-	headers?: Record<string, string>;
 	binaryType?: BinaryType;
 }
 
@@ -12,7 +11,7 @@ export class OreSocket<T = unknown> {
 	private readonly errorCallbacks: Array<(error: Error) => void> = [];
 
 	constructor(url: string, options?: OreSocketOptions) {
-		this.ws = createWebSocket(url, options?.headers);
+		this.ws = new WebSocket(url);
 
 		if (options?.binaryType) {
 			this.ws.binaryType = options.binaryType;
@@ -72,8 +71,8 @@ function clampDim(value: number | undefined, max: number): number {
 }
 
 export class Console extends OreSocket<ArrayBuffer> {
-	constructor(url: string, headers?: Record<string, string>) {
-		super(url, { headers, binaryType: "arraybuffer" });
+	constructor(url: string) {
+		super(url, { binaryType: "arraybuffer" });
 	}
 
 	onData(callback: (data: Uint8Array) => void): void {
@@ -102,22 +101,15 @@ export function buildConsoleUrl(
 	server: string,
 	cols?: number,
 	rows?: number,
+	token?: string,
 ): string {
 	const wsBase = baseUrl.replace(/^http/, "ws");
 	const url = new URL(`${wsBase}/api/projects/${encodeURIComponent(name)}/console`);
 	url.searchParams.set("server", server);
 	url.searchParams.set("cols", String(clampDim(cols ?? DEFAULT_COLS, MAX_COLS)));
 	url.searchParams.set("rows", String(clampDim(rows ?? DEFAULT_ROWS, MAX_ROWS)));
-	return url.toString();
-}
-
-function createWebSocket(url: string, headers?: Record<string, string>): WebSocket {
-	if (headers) {
-		const WS = WebSocket as unknown as new (
-			url: string,
-			opts: { headers: Record<string, string> },
-		) => WebSocket;
-		return new WS(url, { headers });
+	if (token) {
+		url.searchParams.set("token", token);
 	}
-	return new WebSocket(url);
+	return url.toString();
 }

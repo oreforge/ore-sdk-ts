@@ -55,7 +55,9 @@ export class NdjsonStream implements AsyncIterable<StreamLine> {
 	}
 
 	async drain(): Promise<void> {
-		await this.toArray();
+		for await (const _line of this) {
+			void _line;
+		}
 	}
 }
 

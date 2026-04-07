@@ -2,10 +2,11 @@ export { OreClient, type OreClientOptions } from "./client";
 
 export { OreApiError, OreConnectionError, OreError, OreStreamError } from "./core/errors";
 export { NdjsonStream } from "./core/streaming";
-export { Console, OreSocket, type OreSocketOptions } from "./core/websocket";
+export { Console, OreSocket } from "./core/websocket";
 
 export { Project } from "./resources/project";
 export { Projects } from "./resources/projects";
+export { Webhook } from "./resources/webhook";
 
 export type {
 	ContainerState,

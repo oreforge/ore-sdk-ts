@@ -1,7 +1,7 @@
 import type { RequestOptions } from "../types/requests";
 import { OreApiError, OreConnectionError } from "./errors";
 
-type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
+type HttpMethod = "GET" | "POST" | "DELETE";
 
 const RETRYABLE_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
 const RETRYABLE_METHODS: Set<HttpMethod> = new Set(["GET", "DELETE"]);
@@ -35,8 +35,27 @@ export class HttpClient {
 		return this.request<T>("POST", path, body, options);
 	}
 
-	async patch<T>(path: string, body?: unknown, options?: RequestOptions): Promise<T> {
-		return this.request<T>("PATCH", path, body, options);
+	async postNoAuth<T>(path: string, options?: RequestOptions): Promise<T> {
+		const url = `${this.baseUrl}${path}`;
+		const headers = new Headers(options?.headers);
+		headers.set("Accept", "application/json");
+
+		let response: Response;
+		try {
+			response = await fetch(url, {
+				method: "POST",
+				headers,
+				signal: options?.signal,
+			});
+		} catch (error) {
+			throw new OreConnectionError("Failed to connect", { cause: error });
+		}
+
+		if (!response.ok) {
+			throw await this.parseError(response);
+		}
+
+		return (await response.json()) as T;
 	}
 
 	async delete(path: string, options?: RequestOptions): Promise<void> {
@@ -50,6 +69,7 @@ export class HttpClient {
 		options?: RequestOptions,
 	): Promise<Response> {
 		const init = this.buildFetchInit(method, body, options);
+		(init.headers as Headers).set("Accept", "application/x-ndjson");
 
 		let response: Response;
 		try {
