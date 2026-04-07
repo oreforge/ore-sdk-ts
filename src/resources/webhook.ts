@@ -19,7 +19,7 @@ export class Webhook {
 		if (request.no_cache) params.set("no_cache", "true");
 
 		return this.http.postNoAuth<WebhookResponse>(
-			`/webhook/${encodeURIComponent(name)}?${params}`,
+			`/api/webhook/${encodeURIComponent(name)}?${params}`,
 			options,
 		);
 	}
