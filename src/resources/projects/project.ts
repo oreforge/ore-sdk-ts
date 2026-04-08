@@ -36,6 +36,10 @@ export class Project {
 		return `/api/projects/${encodeURIComponent(this.name)}${endpoint}`;
 	}
 
+	get iconUrl(): string {
+		return `${this.http.base}/api/projects/${encodeURIComponent(this.name)}/icon`;
+	}
+
 	async detail(options?: RequestOptions): Promise<ProjectDetailResponse> {
 		return this.http.get<ProjectDetailResponse>(
 			`/api/projects/${encodeURIComponent(this.name)}`,

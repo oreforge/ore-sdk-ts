@@ -85,8 +85,26 @@ const detail = await project.detail();
 console.log(detail.spec.network);
 console.log(detail.spec.servers);        // server specs (software, memory, ports, etc.)
 console.log(detail.spec.services);       // service specs (image, ports, env, etc.)
+console.log(detail.spec.icon);           // optional icon path (e.g. "logo.png")
 console.log(detail.spec.gitops);         // polling and webhook config
 console.log(detail.state.servers);       // deployed image tags and config hashes
+```
+
+### Project Icon
+
+Get the URL to the project's icon image for use in `<img>` tags.
+
+```ts
+const url = project.iconUrl; // full URL to GET /api/projects/{name}/icon
+
+// use in frontend
+<img src={project.iconUrl} alt={project.name} />
+
+// check if icon is configured
+const detail = await project.detail();
+if (detail.spec.icon) {
+  console.log("Icon available at:", project.iconUrl);
+}
 ```
 
 ### Build History

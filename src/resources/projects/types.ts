@@ -148,6 +148,7 @@ export interface SpecGitOps {
 
 export interface SpecResponse {
 	network: string;
+	icon?: string;
 	servers: SpecServer[];
 	services?: SpecService[];
 	gitops?: SpecGitOps;
