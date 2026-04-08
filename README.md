@@ -26,7 +26,7 @@ bun add @oreforge/sdk
 import { OreClient } from "@oreforge/sdk";
 
 const client = new OreClient({
-  baseUrl: "http://localhost:8080",
+  baseUrl: "http://localhost:9090",
   token: "your-api-token",
   maxRetries: 2, // optional, retries on 429/5xx for GET/DELETE (default: 2)
 });
@@ -74,6 +74,32 @@ const project = client.projects.get("mynetwork");
 ## Project Operations
 
 All streaming operations return an `NdjsonStream` that implements `AsyncIterable<StreamLine>`.
+
+### Project Detail
+
+Returns the full project specification, deploy state, and gitops configuration.
+
+```ts
+const detail = await project.detail();
+
+console.log(detail.spec.network);
+console.log(detail.spec.servers);        // server specs (software, memory, ports, etc.)
+console.log(detail.spec.services);       // service specs (image, ports, env, etc.)
+console.log(detail.spec.gitops);         // polling and webhook config
+console.log(detail.state.servers);       // deployed image tags and config hashes
+```
+
+### Build History
+
+Returns cached binaries and build artifacts with timing information.
+
+```ts
+const { builds, binaries } = await project.builds();
+
+for (const [key, entry] of Object.entries(builds)) {
+  console.log(entry.server_name, entry.image_tag, entry.duration_ms + "ms");
+}
+```
 
 ### Status
 
@@ -144,7 +170,7 @@ console.log(info.enabled, info.url, info.secret);
 
 ## Servers
 
-Manage individual servers and services within a project.
+Manage individual game servers within a project.
 
 ### List Servers
 
@@ -183,6 +209,51 @@ await lobby.stop().drain();
 
 ```ts
 for await (const line of lobby.restart()) {
+  console.log(line.msg);
+}
+```
+
+## Services
+
+Manage external services (databases, caches, etc.) within a project.
+
+### List Services
+
+```ts
+const { services } = await project.services.list();
+
+for (const svc of services) {
+  console.log(svc.name, svc.container.state);
+}
+```
+
+### Get Service Status
+
+```ts
+const db = project.services.get("database");
+const status = await db.status();
+
+console.log(status.name, status.container.state, status.container.health);
+```
+
+### Start a Service
+
+```ts
+for await (const line of db.start()) {
+  console.log(line.msg);
+}
+```
+
+### Stop a Service
+
+```ts
+await db.stop().drain();
+```
+
+### Restart a Service
+
+```ts
+for await (const line of db.restart()) {
   console.log(line.msg);
 }
 ```
@@ -248,7 +319,7 @@ socket.close();
 
 ## Streaming
 
-All streaming methods (`up`, `down`, `build`, `clean`, `update`, `start`, `stop`, `restart`) return an `NdjsonStream<StreamLine>`.
+All streaming methods (`up`, `down`, `build`, `clean`, `update`, and per-server/service `start`, `stop`, `restart`) return an `NdjsonStream<StreamLine>`.
 
 ### Iterate Lines
 
