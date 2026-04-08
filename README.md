@@ -142,6 +142,51 @@ const info = await project.webhookInfo();
 console.log(info.enabled, info.url, info.secret);
 ```
 
+## Servers
+
+Manage individual servers and services within a project.
+
+### List Servers
+
+```ts
+const { servers, services } = await project.servers.list();
+
+for (const server of servers) {
+  console.log(server.name, server.container.state);
+}
+```
+
+### Get Server Status
+
+```ts
+const lobby = project.servers.get("lobby");
+const status = await lobby.status();
+
+console.log(status.name, status.container.state, status.container.health);
+```
+
+### Start a Server
+
+```ts
+for await (const line of lobby.start()) {
+  console.log(line.msg);
+}
+```
+
+### Stop a Server
+
+```ts
+await lobby.stop().drain();
+```
+
+### Restart a Server
+
+```ts
+for await (const line of lobby.restart()) {
+  console.log(line.msg);
+}
+```
+
 ## Webhook
 
 Trigger a webhook to redeploy a project. This endpoint does not require authentication.
@@ -203,7 +248,7 @@ socket.close();
 
 ## Streaming
 
-All streaming methods (`up`, `down`, `build`, `clean`, `update`) return an `NdjsonStream<StreamLine>`.
+All streaming methods (`up`, `down`, `build`, `clean`, `update`, `start`, `stop`, `restart`) return an `NdjsonStream<StreamLine>`.
 
 ### Iterate Lines
 

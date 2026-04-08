@@ -31,6 +31,8 @@ export type {
 	UpRequest,
 	WebhookInfoResponse,
 } from "./resources/projects/types";
+export { Server, Servers } from "./resources/servers";
+export type { ServerListResponse, ServerStatusResponse } from "./resources/servers/types";
 export { Webhook } from "./resources/webhook";
 
 export type { WebhookResponse, WebhookTriggerRequest } from "./resources/webhook/types";

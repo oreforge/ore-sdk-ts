@@ -2,6 +2,7 @@ import type { HttpClient } from "../../core/http";
 import type { NdjsonStream } from "../../core/streaming";
 import type { OreConsole } from "../../core/websocket";
 import type { RequestOptions } from "../../types";
+import { Servers } from "../servers";
 import type {
 	BuildRequest,
 	CleanRequest,
@@ -15,6 +16,7 @@ export type ConsoleFactory = (name: string, options: ConsoleOptions) => OreConso
 
 export class Project {
 	readonly name: string;
+	readonly servers: Servers;
 	private readonly http: HttpClient;
 	private readonly createConsole: ConsoleFactory;
 
@@ -22,6 +24,7 @@ export class Project {
 		this.name = name;
 		this.http = http;
 		this.createConsole = createConsole;
+		this.servers = new Servers(name, http);
 	}
 
 	private path(endpoint: string): string {
