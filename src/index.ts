@@ -1,14 +1,22 @@
 export { OreClient, type OreClientOptions } from "./client";
-
-export { OreApiError, OreConnectionError, OreError, OreStreamError } from "./core/errors";
 export { NdjsonStream } from "./core/streaming";
-export { Console, OreSocket } from "./core/websocket";
+export { OreConsole, OreSocket } from "./core/websocket";
+export {
+	OreApiError,
+	OreAuthenticationError,
+	OreConnectionError,
+	OreError,
+	OreNotFoundError,
+	OreRateLimitError,
+	OreStreamError,
+} from "./errors";
 
-export { Project } from "./resources/project";
-export { Projects } from "./resources/projects";
-export { Webhook } from "./resources/webhook";
-
+export { Project, Projects } from "./resources/projects";
 export type {
+	AddProjectRequest,
+	BuildRequest,
+	CleanRequest,
+	ConsoleOptions,
 	ContainerState,
 	ContainerStatus,
 	CPUStatus,
@@ -16,23 +24,17 @@ export type {
 	MemoryStatus,
 	NetworkStatus,
 	PortBinding,
-	ResourceStatus,
-	ServerStatus,
-	StreamLine,
-} from "./types/models";
-export type {
-	AddProjectRequest,
-	BuildRequest,
-	CleanRequest,
-	PruneRequest,
-	RequestOptions,
-	UpRequest,
-	WebhookTriggerRequest,
-} from "./types/requests";
-export type {
 	ProjectListResponse,
 	ProjectResponse,
+	PruneRequest,
+	ResourceStatus,
+	ServerStatus,
+	UpRequest,
 	WebhookInfoResponse,
-	WebhookResponse,
-} from "./types/responses";
-export type { ConsoleFactory, ConsoleOptions } from "./types/websocket";
+} from "./resources/projects/types";
+export { Webhook } from "./resources/webhook";
+
+export type { WebhookResponse, WebhookTriggerRequest } from "./resources/webhook/types";
+
+export type { RequestOptions } from "./types/requests";
+export type { StreamLine } from "./types/streaming";

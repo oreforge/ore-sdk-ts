@@ -1,5 +1,12 @@
-import type { RequestOptions } from "../types/requests";
-import { OreApiError, OreConnectionError } from "./errors";
+import {
+	OreApiError,
+	OreAuthenticationError,
+	OreConnectionError,
+	OreNotFoundError,
+	OreRateLimitError,
+} from "../errors";
+import type { RequestOptions } from "../types";
+import { NdjsonStream } from "./streaming";
 
 type HttpMethod = "GET" | "POST" | "DELETE";
 
@@ -23,10 +30,6 @@ export class HttpClient {
 		this.maxRetries = options.maxRetries ?? 2;
 	}
 
-	get url(): string {
-		return this.baseUrl;
-	}
-
 	async get<T>(path: string, options?: RequestOptions): Promise<T> {
 		return this.request<T>("GET", path, undefined, options);
 	}
@@ -36,33 +39,19 @@ export class HttpClient {
 	}
 
 	async postNoAuth<T>(path: string, options?: RequestOptions): Promise<T> {
-		const url = `${this.baseUrl}${path}`;
-		const headers = new Headers(options?.headers);
-		headers.set("Accept", "application/json");
-
-		let response: Response;
-		try {
-			response = await fetch(url, {
-				method: "POST",
-				headers,
-				signal: options?.signal,
-			});
-		} catch (error) {
-			throw new OreConnectionError("Failed to connect", { cause: error });
-		}
-
-		if (!response.ok) {
-			throw await this.parseError(response);
-		}
-
-		return (await response.json()) as T;
+		return this.request<T>("POST", path, undefined, options, { skipAuth: true });
 	}
 
 	async delete(path: string, options?: RequestOptions): Promise<void> {
 		await this.request<void>("DELETE", path, undefined, options);
 	}
 
-	async stream(
+	stream(method: HttpMethod, path: string, body?: unknown, options?: RequestOptions): NdjsonStream {
+		const response = this.fetchStream(method, path, body, options);
+		return new NdjsonStream(response);
+	}
+
+	private async fetchStream(
 		method: HttpMethod,
 		path: string,
 		body?: unknown,
@@ -90,6 +79,7 @@ export class HttpClient {
 		path: string,
 		body?: unknown,
 		options?: RequestOptions,
+		internal?: { skipAuth?: boolean },
 	): Promise<T> {
 		const url = `${this.baseUrl}${path}`;
 		const canRetry = RETRYABLE_METHODS.has(method);
@@ -104,7 +94,7 @@ export class HttpClient {
 
 			let response: Response;
 			try {
-				response = await fetch(url, this.buildFetchInit(method, body, options));
+				response = await fetch(url, this.buildFetchInit(method, body, options, internal));
 			} catch (error) {
 				lastError = new OreConnectionError("Failed to connect", { cause: error });
 
@@ -137,33 +127,50 @@ export class HttpClient {
 		method: HttpMethod,
 		body?: unknown,
 		options?: RequestOptions,
+		internal?: { skipAuth?: boolean },
 	): RequestInit {
 		const headers = new Headers(options?.headers);
 
-		if (this.token) {
+		if (!internal?.skipAuth && this.token) {
 			headers.set("Authorization", `Bearer ${this.token}`);
 		}
 
 		headers.set("Accept", "application/json");
+		headers.set("User-Agent", "@oreforge/sdk");
 
 		if (body !== undefined) {
 			headers.set("Content-Type", "application/json");
 		}
 
+		const signal =
+			options?.signal ?? (options?.timeout ? AbortSignal.timeout(options.timeout) : undefined);
+
 		return {
 			method,
 			headers,
 			body: body !== undefined ? JSON.stringify(body) : undefined,
-			signal: options?.signal,
+			signal,
 		};
 	}
 
 	private async parseError(response: Response): Promise<OreApiError> {
+		let detail: unknown;
 		try {
-			const body = (await response.json()) as { status?: number; detail?: string };
-			return new OreApiError(body.status ?? response.status, body.detail ?? response.statusText);
+			const body = (await response.json()) as { detail?: unknown };
+			detail = body.detail ?? response.statusText;
 		} catch {
-			return new OreApiError(response.status, response.statusText);
+			detail = response.statusText;
+		}
+
+		switch (response.status) {
+			case 401:
+				return new OreAuthenticationError(detail);
+			case 404:
+				return new OreNotFoundError(detail);
+			case 429:
+				return new OreRateLimitError(detail);
+			default:
+				return new OreApiError(response.status, detail);
 		}
 	}
 }

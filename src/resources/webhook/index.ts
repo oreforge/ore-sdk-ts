@@ -1,6 +1,6 @@
-import type { HttpClient } from "../core/http";
-import type { RequestOptions, WebhookTriggerRequest } from "../types/requests";
-import type { WebhookResponse } from "../types/responses";
+import type { HttpClient } from "../../core/http";
+import type { RequestOptions } from "../../types";
+import type { WebhookResponse, WebhookTriggerRequest } from "./types";
 
 export class Webhook {
 	private readonly http: HttpClient;

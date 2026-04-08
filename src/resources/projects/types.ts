@@ -48,11 +48,46 @@ export interface NetworkStatus {
 	services?: ServerStatus[];
 }
 
-export interface StreamLine {
-	time?: string;
-	level?: string;
-	msg?: string;
-	done?: boolean;
-	error?: string;
-	[key: string]: unknown;
+export interface AddProjectRequest {
+	url: string;
+	name?: string;
+}
+
+export interface UpRequest {
+	no_cache?: boolean;
+	force?: boolean;
+}
+
+export interface BuildRequest {
+	no_cache?: boolean;
+}
+
+export interface PruneRequest {
+	target?: "all" | "servers" | "images" | "data";
+}
+
+export interface CleanRequest {
+	target?: "all" | "cache" | "builds";
+}
+
+export interface ProjectListResponse {
+	projects: string[];
+}
+
+export interface ProjectResponse {
+	name: string;
+}
+
+export interface WebhookInfoResponse {
+	enabled: boolean;
+	url?: string;
+	secret?: string;
+	force?: boolean;
+	no_cache?: boolean;
+}
+
+export interface ConsoleOptions {
+	server: string;
+	cols?: number;
+	rows?: number;
 }

@@ -1,9 +1,9 @@
-import type { HttpClient } from "../core/http";
-import { NdjsonStream } from "../core/streaming";
-import type { AddProjectRequest, RequestOptions } from "../types/requests";
-import type { ProjectListResponse, ProjectResponse } from "../types/responses";
-import type { ConsoleFactory } from "../types/websocket";
+import type { HttpClient } from "../../core/http";
+import type { NdjsonStream } from "../../core/streaming";
+import type { RequestOptions } from "../../types";
+import type { ConsoleFactory } from "./project";
 import { Project } from "./project";
+import type { AddProjectRequest, ProjectListResponse, ProjectResponse } from "./types";
 
 export class Projects {
 	private readonly http: HttpClient;
@@ -27,13 +27,11 @@ export class Projects {
 	}
 
 	update(name: string, options?: RequestOptions): NdjsonStream {
-		return new NdjsonStream(
-			this.http.stream(
-				"POST",
-				`/api/projects/${encodeURIComponent(name)}/update`,
-				undefined,
-				options,
-			),
+		return this.http.stream(
+			"POST",
+			`/api/projects/${encodeURIComponent(name)}/update`,
+			undefined,
+			options,
 		);
 	}
 
@@ -41,3 +39,5 @@ export class Projects {
 		return new Project(name, this.http, this.createConsole);
 	}
 }
+
+export { Project } from "./project";

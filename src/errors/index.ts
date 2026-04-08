@@ -1,4 +1,4 @@
-import type { StreamLine } from "../types/models";
+import type { StreamLine } from "../types";
 
 export class OreError extends Error {
 	constructor(message: string, options?: ErrorOptions) {
@@ -9,13 +9,34 @@ export class OreError extends Error {
 
 export class OreApiError extends OreError {
 	readonly status: number;
-	readonly detail: string;
+	readonly detail: unknown;
 
-	constructor(status: number, detail: string) {
-		super(`HTTP ${status}: ${detail}`);
+	constructor(status: number, detail: unknown) {
+		super(`HTTP ${status}: ${String(detail)}`);
 		this.name = "OreApiError";
 		this.status = status;
 		this.detail = detail;
+	}
+}
+
+export class OreAuthenticationError extends OreApiError {
+	constructor(detail: unknown) {
+		super(401, detail);
+		this.name = "OreAuthenticationError";
+	}
+}
+
+export class OreNotFoundError extends OreApiError {
+	constructor(detail: unknown) {
+		super(404, detail);
+		this.name = "OreNotFoundError";
+	}
+}
+
+export class OreRateLimitError extends OreApiError {
+	constructor(detail: unknown) {
+		super(429, detail);
+		this.name = "OreRateLimitError";
 	}
 }
 

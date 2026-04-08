@@ -1,8 +1,8 @@
 import { HttpClient } from "./core/http";
-import { buildConsoleUrl, Console } from "./core/websocket";
+import { buildConsoleUrl, OreConsole } from "./core/websocket";
 import { Projects } from "./resources/projects";
+import type { ConsoleOptions } from "./resources/projects/types";
 import { Webhook } from "./resources/webhook";
-import type { ConsoleOptions } from "./types/websocket";
 
 export interface OreClientOptions {
 	baseUrl: string;
@@ -30,7 +30,7 @@ export class OreClient {
 				opts.rows,
 				options.token,
 			);
-			return new Console(url);
+			return new OreConsole(url);
 		};
 
 		this.projects = new Projects(http, createConsole);

@@ -1,4 +1,4 @@
-import { OreConnectionError } from "./errors";
+import { OreConnectionError } from "../errors";
 
 export interface OreSocketOptions {
 	binaryType?: BinaryType;
@@ -41,12 +41,30 @@ export class OreSocket<T = unknown> {
 		this.messageCallbacks.push(callback);
 	}
 
+	offMessage(callback: (data: T) => void): void {
+		removeFrom(this.messageCallbacks, callback);
+	}
+
 	onClose(callback: () => void): void {
 		this.closeCallbacks.push(callback);
 	}
 
+	offClose(callback: () => void): void {
+		removeFrom(this.closeCallbacks, callback);
+	}
+
 	onError(callback: (error: Error) => void): void {
 		this.errorCallbacks.push(callback);
+	}
+
+	offError(callback: (error: Error) => void): void {
+		removeFrom(this.errorCallbacks, callback);
+	}
+
+	removeAllListeners(): void {
+		this.messageCallbacks.length = 0;
+		this.closeCallbacks.length = 0;
+		this.errorCallbacks.length = 0;
 	}
 
 	send(data: string | ArrayBuffer | Uint8Array<ArrayBuffer>): void {
@@ -60,6 +78,13 @@ export class OreSocket<T = unknown> {
 	}
 }
 
+function removeFrom<T>(array: T[], item: T): void {
+	const index = array.indexOf(item);
+	if (index !== -1) {
+		array.splice(index, 1);
+	}
+}
+
 const DEFAULT_COLS = 80;
 const DEFAULT_ROWS = 24;
 const MAX_COLS = 500;
@@ -70,7 +95,7 @@ function clampDim(value: number | undefined, max: number): number {
 	return Math.min(Math.floor(value), max);
 }
 
-export class Console extends OreSocket<ArrayBuffer> {
+export class OreConsole extends OreSocket<ArrayBuffer> {
 	constructor(url: string) {
 		super(url, { binaryType: "arraybuffer" });
 	}

@@ -1,7 +1,7 @@
-import type { StreamLine } from "../types/models";
-import { OreError, OreStreamError } from "./errors";
+import { OreError, OreStreamError } from "../errors";
+import type { StreamLine } from "../types/streaming";
 
-export class NdjsonStream implements AsyncIterable<StreamLine> {
+export class NdjsonStream<T extends StreamLine = StreamLine> implements AsyncIterable<T> {
 	private readonly response: Response | Promise<Response>;
 	private consumed = false;
 
@@ -9,7 +9,7 @@ export class NdjsonStream implements AsyncIterable<StreamLine> {
 		this.response = response;
 	}
 
-	async *[Symbol.asyncIterator](): AsyncIterator<StreamLine> {
+	async *[Symbol.asyncIterator](): AsyncIterator<T> {
 		if (this.consumed) {
 			throw new OreError("NdjsonStream has already been consumed");
 		}
@@ -35,19 +35,19 @@ export class NdjsonStream implements AsyncIterable<StreamLine> {
 
 				for (const raw of lines) {
 					const line = parseLine(raw);
-					if (line) yield line;
+					if (line) yield line as T;
 				}
 			}
 
 			const line = parseLine(buffer);
-			if (line) yield line;
+			if (line) yield line as T;
 		} finally {
 			reader.releaseLock();
 		}
 	}
 
-	async toArray(): Promise<StreamLine[]> {
-		const lines: StreamLine[] = [];
+	async toArray(): Promise<T[]> {
+		const lines: T[] = [];
 		for await (const line of this) {
 			lines.push(line);
 		}
