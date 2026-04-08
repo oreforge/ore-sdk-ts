@@ -26,7 +26,6 @@ export type {
 	PortBinding,
 	ProjectListResponse,
 	ProjectResponse,
-	PruneRequest,
 	ResourceStatus,
 	ServerStatus,
 	UpRequest,

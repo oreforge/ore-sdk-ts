@@ -7,7 +7,6 @@ import type {
 	CleanRequest,
 	ConsoleOptions,
 	NetworkStatus,
-	PruneRequest,
 	UpRequest,
 	WebhookInfoResponse,
 } from "./types";
@@ -43,10 +42,6 @@ export class Project {
 
 	build(request?: BuildRequest, options?: RequestOptions): NdjsonStream {
 		return this.http.stream("POST", this.path("/build"), request, options);
-	}
-
-	prune(request?: PruneRequest, options?: RequestOptions): NdjsonStream {
-		return this.http.stream("POST", this.path("/prune"), request, options);
 	}
 
 	clean(request?: CleanRequest, options?: RequestOptions): NdjsonStream {

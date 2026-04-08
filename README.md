@@ -121,22 +121,18 @@ for await (const line of project.build({ no_cache: true })) {
 }
 ```
 
-### Prune
-
-```ts
-await project.prune().drain();
-
-// with target
-await project.prune({ target: "images" }).drain(); // "all" | "servers" | "images" | "data"
-```
-
 ### Clean
 
 ```ts
 await project.clean().drain();
 
 // with target
-await project.clean({ target: "cache" }).drain(); // "all" | "cache" | "builds"
+await project.clean({ target: "containers" }).drain();
+await project.clean({ target: "images" }).drain();
+await project.clean({ target: "volumes" }).drain();
+await project.clean({ target: "cache" }).drain();
+await project.clean({ target: "builds" }).drain();
+// "all" | "containers" | "images" | "volumes" | "cache" | "builds"
 ```
 
 ### Webhook Info
@@ -207,7 +203,7 @@ socket.close();
 
 ## Streaming
 
-All streaming methods (`up`, `down`, `build`, `prune`, `clean`, `update`) return an `NdjsonStream<StreamLine>`.
+All streaming methods (`up`, `down`, `build`, `clean`, `update`) return an `NdjsonStream<StreamLine>`.
 
 ### Iterate Lines
 

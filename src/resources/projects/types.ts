@@ -62,12 +62,8 @@ export interface BuildRequest {
 	no_cache?: boolean;
 }
 
-export interface PruneRequest {
-	target?: "all" | "servers" | "images" | "data";
-}
-
 export interface CleanRequest {
-	target?: "all" | "cache" | "builds";
+	target?: "all" | "containers" | "images" | "volumes" | "cache" | "builds";
 }
 
 export interface ProjectListResponse {
