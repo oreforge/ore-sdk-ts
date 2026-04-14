@@ -1,6 +1,6 @@
 import type { HttpClient } from "../../core/http";
-import type { NdjsonStream } from "../../core/streaming";
 import type { RequestOptions } from "../../types";
+import type { OperationResponse } from "../operations/types";
 import type { ConsoleFactory } from "./project";
 import { Project } from "./project";
 import type { AddProjectRequest, ProjectListResponse, ProjectResponse } from "./types";
@@ -26,9 +26,8 @@ export class Projects {
 		return this.http.delete(`/api/projects/${encodeURIComponent(name)}`, options);
 	}
 
-	update(name: string, options?: RequestOptions): NdjsonStream {
-		return this.http.stream(
-			"POST",
+	async update(name: string, options?: RequestOptions): Promise<OperationResponse> {
+		return this.http.post<OperationResponse>(
 			`/api/projects/${encodeURIComponent(name)}/update`,
 			undefined,
 			options,

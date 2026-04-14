@@ -11,6 +11,13 @@ export {
 	OreStreamError,
 } from "./errors";
 
+export { Operation, Operations } from "./resources/operations";
+export type {
+	OperationListOptions,
+	OperationListResponse,
+	OperationResponse,
+	OperationStatus,
+} from "./resources/operations/types";
 export { Project, Projects } from "./resources/projects";
 export type {
 	AddProjectRequest,

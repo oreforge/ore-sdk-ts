@@ -1,5 +1,6 @@
 import { HttpClient } from "./core/http";
 import { buildConsoleUrl, OreConsole } from "./core/websocket";
+import { Operations } from "./resources/operations";
 import { Projects } from "./resources/projects";
 import type { ConsoleOptions } from "./resources/projects/types";
 import { Webhook } from "./resources/webhook";
@@ -12,6 +13,7 @@ export interface OreClientOptions {
 
 export class OreClient {
 	readonly projects: Projects;
+	readonly operations: Operations;
 	readonly webhook: Webhook;
 
 	constructor(options: OreClientOptions) {
@@ -34,6 +36,7 @@ export class OreClient {
 		};
 
 		this.projects = new Projects(http, createConsole);
+		this.operations = new Operations(http);
 		this.webhook = new Webhook(http);
 	}
 }

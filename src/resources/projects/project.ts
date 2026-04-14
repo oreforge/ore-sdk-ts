@@ -1,7 +1,7 @@
 import type { HttpClient } from "../../core/http";
-import type { NdjsonStream } from "../../core/streaming";
 import type { OreConsole } from "../../core/websocket";
 import type { RequestOptions } from "../../types";
+import type { OperationResponse } from "../operations/types";
 import { Servers } from "../servers";
 import { Services } from "../services";
 import type {
@@ -55,20 +55,20 @@ export class Project {
 		return this.http.get<BuildsResponse>(this.path("/builds"), options);
 	}
 
-	up(request?: UpRequest, options?: RequestOptions): NdjsonStream {
-		return this.http.stream("POST", this.path("/up"), request, options);
+	async up(request?: UpRequest, options?: RequestOptions): Promise<OperationResponse> {
+		return this.http.post<OperationResponse>(this.path("/up"), request, options);
 	}
 
-	down(options?: RequestOptions): NdjsonStream {
-		return this.http.stream("POST", this.path("/down"), undefined, options);
+	async down(options?: RequestOptions): Promise<OperationResponse> {
+		return this.http.post<OperationResponse>(this.path("/down"), undefined, options);
 	}
 
-	build(request?: BuildRequest, options?: RequestOptions): NdjsonStream {
-		return this.http.stream("POST", this.path("/build"), request, options);
+	async build(request?: BuildRequest, options?: RequestOptions): Promise<OperationResponse> {
+		return this.http.post<OperationResponse>(this.path("/build"), request, options);
 	}
 
-	clean(request?: CleanRequest, options?: RequestOptions): NdjsonStream {
-		return this.http.stream("POST", this.path("/clean"), request, options);
+	async clean(request?: CleanRequest, options?: RequestOptions): Promise<OperationResponse> {
+		return this.http.post<OperationResponse>(this.path("/clean"), request, options);
 	}
 
 	async webhookInfo(options?: RequestOptions): Promise<WebhookInfoResponse> {

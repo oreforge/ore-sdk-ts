@@ -7,4 +7,5 @@ export interface WebhookTriggerRequest {
 export interface WebhookResponse {
 	status: string;
 	project: string;
+	operation_id?: string;
 }

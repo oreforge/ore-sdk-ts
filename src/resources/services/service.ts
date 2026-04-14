@@ -1,6 +1,6 @@
 import type { HttpClient } from "../../core/http";
-import type { NdjsonStream } from "../../core/streaming";
 import type { RequestOptions } from "../../types";
+import type { OperationResponse } from "../operations/types";
 import type { ServiceStatusResponse } from "./types";
 
 export class Service {
@@ -24,15 +24,15 @@ export class Service {
 		return this.http.get<ServiceStatusResponse>(this.path(""), options);
 	}
 
-	start(options?: RequestOptions): NdjsonStream {
-		return this.http.stream("POST", this.path("/start"), undefined, options);
+	async start(options?: RequestOptions): Promise<OperationResponse> {
+		return this.http.post<OperationResponse>(this.path("/start"), undefined, options);
 	}
 
-	stop(options?: RequestOptions): NdjsonStream {
-		return this.http.stream("POST", this.path("/stop"), undefined, options);
+	async stop(options?: RequestOptions): Promise<OperationResponse> {
+		return this.http.post<OperationResponse>(this.path("/stop"), undefined, options);
 	}
 
-	restart(options?: RequestOptions): NdjsonStream {
-		return this.http.stream("POST", this.path("/restart"), undefined, options);
+	async restart(options?: RequestOptions): Promise<OperationResponse> {
+		return this.http.post<OperationResponse>(this.path("/restart"), undefined, options);
 	}
 }
