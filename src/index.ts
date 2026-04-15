@@ -11,8 +11,20 @@ export {
 	OreStreamError,
 } from "./errors";
 
+export { Backup, Backups } from "./resources/backups";
+export type {
+	BackupKind,
+	BackupListOptions,
+	BackupListResponse,
+	BackupResponse,
+	BackupStatus,
+	BackupStorageRef,
+	CreateBackupRequest,
+	RestoreBackupOptions,
+} from "./resources/backups/types";
 export { Operation, Operations } from "./resources/operations";
 export type {
+	OperationAction,
 	OperationListOptions,
 	OperationListResponse,
 	OperationResponse,
@@ -58,6 +70,16 @@ export { Server, Servers } from "./resources/servers";
 export type { ServerListResponse, ServerStatusResponse } from "./resources/servers/types";
 export { Service, Services } from "./resources/services";
 export type { ServiceListResponse, ServiceStatusResponse } from "./resources/services/types";
+export { Volume, Volumes } from "./resources/volumes";
+export type {
+	DeleteVolumeOptions,
+	PruneCandidate,
+	PruneOptions,
+	PruneReport,
+	PruneSkip,
+	VolumeListResponse,
+	VolumeResponse,
+} from "./resources/volumes/types";
 export { Webhook } from "./resources/webhook";
 
 export type { WebhookResponse, WebhookTriggerRequest } from "./resources/webhook/types";

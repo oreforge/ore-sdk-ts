@@ -1,9 +1,25 @@
 export type OperationStatus = "pending" | "running" | "completed" | "failed" | "cancelled";
 
+export type OperationAction =
+	| "up"
+	| "down"
+	| "build"
+	| "clean"
+	| "update"
+	| "start"
+	| "stop"
+	| "restart"
+	| "deploy"
+	| "volume.measure"
+	| "volume.delete"
+	| "backup.create"
+	| "backup.verify"
+	| "backup.restore";
+
 export interface OperationResponse {
 	id: string;
 	project: string;
-	action: string;
+	action: OperationAction;
 	target?: string;
 	status: OperationStatus;
 	error?: string;

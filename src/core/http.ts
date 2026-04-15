@@ -50,6 +50,10 @@ export class HttpClient {
 		await this.request<void>("DELETE", path, undefined, options);
 	}
 
+	async deleteJson<T>(path: string, options?: RequestOptions): Promise<T> {
+		return this.request<T>("DELETE", path, undefined, options);
+	}
+
 	stream(method: HttpMethod, path: string, body?: unknown, options?: RequestOptions): NdjsonStream {
 		const response = this.fetchStream(method, path, body, options);
 		return new NdjsonStream(response);
