@@ -11,17 +11,6 @@ export {
 	OreStreamError,
 } from "./errors";
 
-export { Backup, Backups } from "./resources/backups";
-export type {
-	BackupKind,
-	BackupListOptions,
-	BackupListResponse,
-	BackupResponse,
-	BackupStatus,
-	BackupStorageRef,
-	CreateBackupRequest,
-	RestoreBackupOptions,
-} from "./resources/backups/types";
 export { Operation, Operations } from "./resources/operations";
 export type {
 	OperationAction,

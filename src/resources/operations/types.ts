@@ -11,10 +11,7 @@ export type OperationAction =
 	| "restart"
 	| "deploy"
 	| "volume.measure"
-	| "volume.delete"
-	| "backup.create"
-	| "backup.verify"
-	| "backup.restore";
+	| "volume.delete";
 
 export interface OperationResponse {
 	id: string;

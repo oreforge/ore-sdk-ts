@@ -1,7 +1,6 @@
 import type { HttpClient } from "../../core/http";
 import type { OreConsole } from "../../core/websocket";
 import type { RequestOptions } from "../../types";
-import { Backups } from "../backups";
 import type { OperationResponse } from "../operations/types";
 import { Servers } from "../servers";
 import { Services } from "../services";
@@ -24,7 +23,6 @@ export class Project {
 	readonly servers: Servers;
 	readonly services: Services;
 	readonly volumes: Volumes;
-	readonly backups: Backups;
 	private readonly http: HttpClient;
 	private readonly createConsole: ConsoleFactory;
 
@@ -35,7 +33,6 @@ export class Project {
 		this.servers = new Servers(name, http);
 		this.services = new Services(name, http);
 		this.volumes = new Volumes(name, http);
-		this.backups = new Backups(name, http);
 	}
 
 	private path(endpoint: string): string {
