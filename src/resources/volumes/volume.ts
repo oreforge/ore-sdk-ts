@@ -24,10 +24,6 @@ export class Volume {
 		return this.http.get<VolumeResponse>(this.path(""), options);
 	}
 
-	async measure(options?: RequestOptions): Promise<OperationResponse> {
-		return this.http.post<OperationResponse>(this.path("/measure"), undefined, options);
-	}
-
 	async delete(opts?: DeleteVolumeOptions & RequestOptions): Promise<OperationResponse> {
 		const params = new URLSearchParams();
 		if (opts?.force) params.set("force", "true");

@@ -10,8 +10,7 @@ export type OperationAction =
 	| "stop"
 	| "restart"
 	| "deploy"
-	| "volume.measure"
-	| "volume.delete";
+	| "volume.remove";
 
 export interface OperationResponse {
 	id: string;
