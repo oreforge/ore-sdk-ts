@@ -11,6 +11,14 @@ export {
 	OreStreamError,
 } from "./errors";
 
+export type {
+	BatchOptions,
+	BatchResponse,
+	BatchStatus,
+	BatchTargetResult,
+	BatchTargetStatus,
+	BatchVolumeDeleteOptions,
+} from "./resources/batch/types";
 export { Operation, Operations } from "./resources/operations";
 export type {
 	OperationAction,

@@ -10,7 +10,11 @@ export type OperationAction =
 	| "stop"
 	| "restart"
 	| "deploy"
-	| "volume.remove";
+	| "volume.remove"
+	| "batch.start"
+	| "batch.stop"
+	| "batch.restart"
+	| "batch.volume.remove";
 
 export interface OperationResponse {
 	id: string;

@@ -1,7 +1,12 @@
 import type { HttpClient } from "../../core/http";
 import type { RequestOptions } from "../../types";
+import type { BatchResponse, BatchVolumeDeleteOptions } from "../batch/types";
+import type { OperationResponse } from "../operations/types";
 import type { PruneOptions, PruneReport, VolumeListResponse } from "./types";
 import { Volume } from "./volume";
+
+type BatchDeleteSync = BatchVolumeDeleteOptions & RequestOptions & { sync: true };
+type BatchDeleteAsync = BatchVolumeDeleteOptions & RequestOptions & { sync?: false };
 
 export class Volumes {
 	private readonly project: string;
@@ -26,6 +31,23 @@ export class Volumes {
 		const query = params.toString();
 		const path = `${this.base()}/prune${query ? `?${query}` : ""}`;
 		return this.http.post<PruneReport>(path, undefined, opts);
+	}
+
+	batchDelete(targets: string[], opts: BatchDeleteSync): Promise<BatchResponse>;
+	batchDelete(targets: string[], opts?: BatchDeleteAsync): Promise<OperationResponse>;
+	batchDelete(
+		targets: string[],
+		opts?: BatchVolumeDeleteOptions & RequestOptions,
+	): Promise<BatchResponse | OperationResponse> {
+		const { sync, force, ...rest } = opts ?? {};
+		const body: Record<string, unknown> = { targets };
+		if (force) body.force = true;
+		const query = sync ? "" : "?async=true";
+		return this.http.post<BatchResponse | OperationResponse>(
+			`${this.base()}:batchDelete${query}`,
+			body,
+			rest,
+		);
 	}
 
 	get(name: string): Volume {
