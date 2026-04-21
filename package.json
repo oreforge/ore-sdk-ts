@@ -30,9 +30,9 @@
 		"prepublishOnly": "bun run build"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.10",
+		"@biomejs/biome": "^2.4.12",
 		"tsup": "^8.5.1",
-		"typescript": "^6.0.2"
+		"typescript": "^6.0.3"
 	},
 	"repository": {
 		"type": "git",
